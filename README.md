@@ -65,3 +65,6 @@ super consumer
   }
 }
 ```
+
+### Usage
+```superconsumer -c /etc/superconsumer.json```
