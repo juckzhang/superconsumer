@@ -33,6 +33,15 @@
     }
   },
 
+  "queue":{
+    "driver":"kafka",
+    "driver_config":{
+      "BrokerList":["172.16.16.4:9092"],
+      "Errors":false,
+      "Notifications":false
+    }
+  },
+
   "topicGroup":{
     "order":{
       "1001":[

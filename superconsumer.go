@@ -30,6 +30,7 @@ func main() {
 	log.NewLogger(app.C)
 	//配置rpc
 	rpc.Config(app.C)
+
 	//加载队列配置
-	queue.ConfigGroup(app.C)
+	queue.Listen(app.C)
 }
