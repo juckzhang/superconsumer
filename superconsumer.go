@@ -28,6 +28,7 @@ func main() {
 	}
 	//配置logger
 	log.NewLogger(app.C)
+
 	//配置rpc
 	rpc.Config(app.C)
 

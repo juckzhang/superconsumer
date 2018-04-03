@@ -38,6 +38,7 @@ func NewKafkaConsumer(c *config.Config) *Kafka {
 }
 func (kafka *Kafka) Listen(group string) {
 	defer wg.Done()
+	var sw sync.WaitGroup
 	var err error
 	//根据groupId获取相应的配置信息
 	kafka.groupId = group
@@ -74,11 +75,15 @@ Loop:
 				kafka.consumer.MarkOffset(msg, "")  // mark message as processed
 				//处理消息
 				for task := range kafka.topic[msg.Topic] {
-					if rpc_client, err:= rpc.NewRpcClient(task.RpcGroup); err != nil {
+					rpc_client, err:= rpc.NewRpcClient(task.RpcGroup)
+					if err != nil {
 						panic(err)
-
-						go rpc_client.Do(task)
 					}
+
+					data := make(map[string]interface{})
+					data["topicNanme"] = msg.Topic
+					data["content"] = msg.Value
+					go rpc_client.Do(task.ServiceName,"handlerQueue", data)
 				}
 			}
 		case <-signals:

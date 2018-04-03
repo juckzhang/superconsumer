@@ -9,6 +9,8 @@ import (
 	"math/rand"
 	"superconsume/constant"
 	"io/ioutil"
+	"fmt"
+	"os"
 )
 
 type RpcConfig struct{
@@ -45,6 +47,7 @@ var (
 
 func Config(c *config.Config)  {
 	c.Configure(&rpc_config_group, "rpc")
+	fmt.Print(rpc_config_group);os.Exit(0);
 	if len(rpc_config_group) == 0 {
 		panic("rpc配置信息不合法")
 	}
@@ -69,10 +72,10 @@ func NewRpcClient(group string) (*RpcClient,error){
 }
 
 // @description 请求rpc
-func (rpcClient *RpcClient) Do(service string, method string, parameters interface{}, group string) (int) {
+func (rpcClient *RpcClient) Do(service string, method string, parameters interface{}) (int) {
 	var req *request
 	var err error
-	if req, err = rpcClient.structure(service, method, parameters, group); err != nil {
+	if req, err = rpcClient.structure(service, method, parameters); err != nil {
 		return constant.RPC_FAILED
 	}
 	req.response, err = rpcClient.httpClient.Do(req.request)
@@ -92,7 +95,7 @@ func (rpcClient *RpcClient) Do(service string, method string, parameters interfa
 }
 
 // @description 构造请求
-func (rpcClient *RpcClient) structure(service string, method string, parameters interface{}, group string) (*request,error) {
+func (rpcClient *RpcClient) structure(service string, method string, parameters interface{}) (*request,error) {
 	//获取配置信息
 	data := requestBody{
 		service: service,
