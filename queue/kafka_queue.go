@@ -5,7 +5,6 @@ import (
     "github.com/bsm/sarama-cluster"
     "github.com/go-ozzo/ozzo-config"
     "superconsume/log"
-    "sync"
 )
 
 type Kafka struct {
@@ -23,6 +22,7 @@ func NewConsumer(c *config.Config, ch chan Message) *Kafka {
         panic(err)
     }
     kafkaClient.mChannel = ch
+    kafkaClient.sig = sig
     return kafkaClient
 }
 
