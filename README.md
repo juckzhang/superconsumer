@@ -1,5 +1,8 @@
 # superconsumer
-super consumer
+superconsumer 是一个将消息队列消费者与具体业务逻辑做分离的中间件产品。
+其核心思想是：通过消息队列获取消息后，将消息格式化后放入一个带缓冲channel。(此处通过channel控制消息处理的并发数)
+              另一个goroutine从channel中获取消息并根据配置文件中的任务配置做不同处理。比如:通过http调用具体业务处理接口或者调用配置脚本。
+
 
 ### feature
 ```
