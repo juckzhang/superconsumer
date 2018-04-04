@@ -11,6 +11,7 @@ import (
 	"sync/atomic"
 	"superconsume/constant"
 	"runtime"
+	"os/signal"
 )
 
 type stats struct {
@@ -62,6 +63,7 @@ func main() {
 	maxConcurrent := app.C.GetInt("maxConcurrent")
 	app.mChannel = make(chan queue.Message, maxConcurrent) //次数可以通过获取配置文件中的最大并发数
 
+	signal.Notify(app.Sig,os.Interrupt)//监听退出信号、user1、user2
 	initApp()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	Wg.Add(2)
@@ -97,7 +99,6 @@ func initRpcClient() {
 	for key, val := range rpc_config_group {
 		rpcClient[key] = rpc.NewRpcClient(val)
 	}
-	log.Info("application", "rpc client init successful!")
 }
 
 // @description 初始化队列消费者
