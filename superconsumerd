@@ -37,7 +37,7 @@ wait_for_pid () {
 case "$1" in
         start)
                 echo -n "Starting superconsumer "
-                $superconsumer_BIN $php_opts
+                nohup $superconsumer_BIN $php_opts &
                 if [ "$?" != 0 ] ; then
                         echo " failed"
                         exit 1

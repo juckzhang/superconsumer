@@ -1,4 +1,4 @@
-#! /sbin/bash
+#! /bin/bash
 ### 编译程序
 go build
 

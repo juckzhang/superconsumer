@@ -1,5 +1,5 @@
-# superconsumerr
-superconsumerr 是一个将消息获取与具体业务逻辑处理部分做分离的中间件产品。</br>
+# superconsumer
+superconsumer 是一个将消息获取与具体业务逻辑处理部分做分离的中间件产品。</br>
 核心思想:</br>
 通过消息队列获取消息并将消息格式化后放入一个带缓冲的channel。(此处通过channel控制消息处理的并发数)</br>
 另一个goroutine从channel中获取消息并根据配置文件中的任务配置做不同处理。比如:通过http调用具体业务处理接口或者调用配置脚本。</br>

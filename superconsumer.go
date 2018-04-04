@@ -16,8 +16,8 @@ import (
 
 type stats struct {
 	taskNum    uint32 `已处理的任务数量`
-	failedNum  uint32 `处理失败的数量`
-	successNum uint32 `处理成功的数量`
+	failedNum  uint32 `处理失败的任务数量`
+	successNum uint32 `处理成功的任务数量`
 }
 
 type App struct {
