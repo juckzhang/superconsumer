@@ -11,6 +11,7 @@ superconsumer 是一个将消息队列消费者与具体业务逻辑做分离的
 3、可配置最大并发数。
 4、监听消费者与业务逻辑处理分离。
 5、完善的日志记录系统。
+6、支持脚本与http接口方式的任务处理接口
 ```
 ### 依赖库
 ```
@@ -37,22 +38,16 @@ go get github.com/go-ozzo/ozzo-log
   },
 
   "rpc":{
-    "backend": {
+    "http": {
       "OpenId": "OpenId",
       "SecretKey": "SecretKey",
       "BaseUrl": ["http://xxx.com/rpc/index"],
       "Type":1
     },
-    "frontend": {
+    "script": {
       "OpenId": "OpenId",
       "SecretKey": "SecretKey",
-      "BaseUrl": ["http://xxx.com/rpc/index"],
-      "Type":1
-    },
-    "middleware": {
-      "OpenId": "OpenId",
-      "SecretKey": "SecretKey",
-      "BaseUrl": ["http://xxx.com/rpc/index"],
+      "BaseUrl": ["php -f script.php"],
       "Type":1
     }
   },
