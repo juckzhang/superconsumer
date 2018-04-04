@@ -70,4 +70,9 @@ super consumer
 ```
 
 ### Usage
-```superconsumer -c /etc/superconsumer.json```
+```
+启动服务: superconsumer start
+停止服务: superconsumer stop
+重启服务: superconsumer restart
+重新加载配置: superconsumer reload
+```
