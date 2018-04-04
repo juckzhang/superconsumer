@@ -48,7 +48,7 @@ go get github.com/go-ozzo/ozzo-log
       "OpenId": "OpenId",
       "SecretKey": "SecretKey",
       "BaseUrl": ["php -f script.php"],
-      "Type":1
+      "Type":2
     }
   },
 
