@@ -66,8 +66,14 @@ go get github.com/go-ozzo/ozzo-log
   "topicGroup":{
     "1001":[
       {
-        "ServiceName":"order/deposit-order",
-        "RpcGroup": "middleware"
+        "ServiceName":"service",
+        "MethodName": "method"
+        "RpcGroup": "http" //对应与`rpc`配置下的具体客户端
+      },
+      {
+        "ServiceName":"service",
+        "MethodName": "method"
+        "RpcGroup": "script" //对应与`rpc`配置下的具体客户端
       }
     ]
   }
