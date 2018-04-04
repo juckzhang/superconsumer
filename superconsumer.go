@@ -12,6 +12,8 @@ import (
     "superconsume/rpc"
     "sync"
     "sync/atomic"
+    "io/ioutil"
+    "strconv"
 )
 
 type stats struct {
@@ -43,34 +45,45 @@ var (
         stats:      stats{},
         Wg:         &sync.WaitGroup{},
     }
-
     rpcClient = make(map[string]*rpc.RpcClient)
-
     consumer queue.QueueInterface
-
     taskList = make(map[string][]Task)
-
     Wg sync.WaitGroup
+    s = flag.String("s", "start", "start|restart|stop|reload")
 )
 
 func main() {
     flag.Parse()
 
-    //加载配置文件
-    if err := app.C.Load(*app.ConfigPath); err != nil {
-        panic(err)
-    }
-    maxConcurrent := app.C.GetInt("maxConcurrent")
-    app.mChannel = make(chan queue.Message, maxConcurrent) //次数可以通过获取配置文件中的最大并发数
+    switch *s {
+    case "start":
+        //加载配置文件
+        if err := app.C.Load(*app.ConfigPath); err != nil {
+            panic(err)
+        }
+        createPidFile()
+        maxConcurrent := app.C.GetInt("maxConcurrent")
+        app.mChannel = make(chan queue.Message, maxConcurrent) //次数可以通过获取配置文件中的最大并发数
+        signal.Notify(app.Sig, os.Interrupt) //监听退出信号、user1、user2
+        initApp()
+        runtime.GOMAXPROCS(runtime.NumCPU())
+        Wg.Add(2)
+        //启动队列监听
+        go listen()
+        go processTask()
+        Wg.Wait()
+        break
+    case "stop":
+        break
+    case "reload":
+    case "restart":
+        pid := getPidFromLog()
+        if pid == 0 {
+            panic("service not run!")
+        }
 
-    signal.Notify(app.Sig, os.Interrupt) //监听退出信号、user1、user2
-    initApp()
-    runtime.GOMAXPROCS(runtime.NumCPU())
-    Wg.Add(2)
-    //启动队列监听
-    go listen()
-    go processTask()
-    Wg.Wait()
+        break
+    }
 }
 
 func initApp() {
@@ -86,6 +99,42 @@ func initApp() {
     //初始化队列消费者
     initConsumer()
 }
+
+func getPidFromLog() int {
+    file := app.C.GetString("PidLog")
+    if file == "" {
+        file = "/tmp/log/superconsumer.log"
+    }
+
+    if pid, err := ioutil.ReadFile(file); err == nil && len(pid) > 0 {
+        if pidInt, err := strconv.Atoi(string(pid)); err == nil && pidInt > 0 {
+            return pidInt
+        }
+    }
+
+    return 0
+}
+
+func createPidFile() {
+    file := app.C.GetString("PidLog")
+    if file == "" {
+        file = "/tmp/log/superconsumer.log"
+    }
+
+    //判断文件是否已经存在
+    if _, err := os.Stat(file); err != nil {
+        if os.IsExist(err) {
+            panic("service is start!")
+        }
+    }
+    //创建pid log file
+    pid := strconv.Itoa(os.Getpid())
+    if err := ioutil.WriteFile(file, []byte(pid), os.ModePerm);err != nil {
+        panic(err)
+    }
+}
+
+
 
 // @description 初始化rpc客户端
 func initRpcClient() {
@@ -163,6 +212,5 @@ loop:
             break loop
         }
     }
-    defer close(app.mChannel)
     wg.Wait()
 }

@@ -25,6 +25,11 @@ go get github.com/bsm/sarama-cluster
 go get github.com/Shopify/sarama
 go get github.com/go-ozzo/ozzo-log
 ```
+### Install
+```
+go get github.com/juckzhang/superconsumer
+
+```
 
 ### Config
 ```json
