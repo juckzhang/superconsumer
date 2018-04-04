@@ -9,8 +9,6 @@ import (
 	"math/rand"
 	"superconsume/constant"
 	"io/ioutil"
-	"fmt"
-	"os"
 )
 
 type RpcConfig struct{
@@ -36,39 +34,32 @@ type request struct {
 }
 
 type RpcClient struct {
-	rpc_config RpcConfig
+	rpcConfig RpcConfig
 	httpClient *http.Client
 }
 
-var (
-	rpc_config_group map[string]RpcConfig
-	rpc_client map[string]*RpcClient
-)
-
-func Config(c *config.Config)  {
-	c.Configure(&rpc_config_group, "rpc")
-	fmt.Print(rpc_config_group);os.Exit(0);
-	if len(rpc_config_group) == 0 {
-		panic("rpc配置信息不合法")
+func NewRpcClient(rpcConfig RpcConfig) *RpcClient{
+	//校验配置信息是否完整
+	if len(rpcConfig.OpenId) == 0 {
+		panic("RpcConfig.OpenId is empty!")
 	}
 
-	rpc_client = make(map[string]*RpcClient)
-	for key, val := range rpc_config_group {
-
-		rpc_client[key] = &RpcClient{
-			rpc_config:val,
-			httpClient:&http.Client{},
-		}
-	}
-}
-
-// @description 创建rpc客户端
-func NewRpcClient(group string) (*RpcClient,error){
-	if rpcClient, ok := rpc_client[group]; ok {
-		return rpcClient, nil
+	if len(rpcConfig.BaseUrl) == 0 {
+		panic("RpcConfig.BaseUrl is empty!")
 	}
 
-	panic("rpc client 不存在!")
+	if len(rpcConfig.SecretKey) == 0 {
+		panic("RpcConfig.SecretKey is empty!")
+	}
+
+	if rpcConfig.Type == 0 {
+		rpcConfig.Type = 1
+	}
+
+	return &RpcClient{
+		rpcConfig:rpcConfig,
+		httpClient:&http.Client{},
+	}
 }
 
 // @description 请求rpc
@@ -101,7 +92,7 @@ func (rpcClient *RpcClient) structure(service string, method string, parameters 
 		service: service,
 		method: method,
 		args:parameters,
-		openId:rpcClient.rpc_config.OpenId,
+		openId:rpcClient.rpcConfig.OpenId,
 		timestamp:time.Now().Unix(),
 		sign:"asffffasdff",
 	}
@@ -113,8 +104,8 @@ func (rpcClient *RpcClient) structure(service string, method string, parameters 
 	dataJson, err := json.Marshal(data)
 	var req *http.Request
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	index := r.Intn(len(rpcClient.rpc_config.BaseUrl))
-	url := rpcClient.rpc_config.BaseUrl[index]
+	index := r.Intn(len(rpcClient.rpcConfig.BaseUrl))
+	url := rpcClient.rpcConfig.BaseUrl[index]
 	req, err = http.NewRequest("POST", url, bytes.NewBuffer(dataJson))
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
