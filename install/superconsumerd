@@ -1,0 +1,101 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          superconsumer
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts superconsumer
+# Description:       starts the superconsumer Process Manager daemon
+### END INIT INFO
+superconsumer_BIN=/usr/sbin/superconsumer
+superconsumer_CONF=/etc/superconsumer.json
+superconsumer_PID=/tmp/superconsumer.pid
+php_opts="-c $superconsumer_CONF"
+wait_for_pid () {
+        try=0
+        while test $try -lt 35 ; do
+                case "$1" in
+                        'created')
+                        if [ -f "$2" ] ; then
+                                try=''
+                                break
+                        fi
+                        ;;
+                        'removed')
+                        if [ ! -f "$2" ] ; then
+                                try=''
+                                break
+                        fi
+                        ;;
+                esac
+                echo -n .
+                try=`expr $try + 1`
+                sleep 1
+        done
+}
+case "$1" in
+        start)
+                echo -n "Starting superconsumer "
+                $superconsumer_BIN $php_opts
+                if [ "$?" != 0 ] ; then
+                        echo " failed"
+                        exit 1
+                fi
+                wait_for_pid created $superconsumer_PID
+                if [ -n "$try" ] ; then
+                        echo " failed"
+                        exit 1
+                else
+                        echo " done"
+                fi
+        ;;
+        stop)
+                echo -n "Gracefully shutting down superconsumer "
+                if [ ! -r $superconsumer_PID ] ; then
+                        echo "warning, no pid file found - superconsumer is not running ?"
+                        exit 1
+                fi
+                kill -QUIT `cat $superconsumer_PID`
+                wait_for_pid removed $superconsumer_PID
+                if [ -n "$try" ] ; then
+                        echo " failed. Use force-exit"
+                        exit 1
+                else
+                        echo " done"
+                       echo " done"
+                fi
+        ;;
+        force-quit)
+                echo -n "Terminating superconsumer "
+                if [ ! -r $superconsumer_PID ] ; then
+                        echo "warning, no pid file found - superconsumer is not running ?"
+                        exit 1
+                fi
+                kill -TERM `cat $superconsumer_PID`
+                wait_for_pid removed $superconsumer_PID
+                if [ -n "$try" ] ; then
+                        echo " failed"
+                        exit 1
+                else
+                        echo " done"
+                fi
+        ;;
+        restart)
+                $0 stop
+                $0 start
+        ;;
+        reload)
+                echo -n "Reload service superconsumer "
+                if [ ! -r $superconsumer_PID ] ; then
+                        echo "warning, no pid file found - superconsumer is not running ?"
+                        exit 1
+                fi
+                kill -USR2 `cat $superconsumer_PID`
+                echo " done"
+        ;;
+        *)
+                echo "Usage: $0 {start|stop|force-quit|restart|reload}"
+                exit 1
+        ;;
+esac

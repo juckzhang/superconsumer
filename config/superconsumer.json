@@ -1,6 +1,6 @@
 {
   "maxConcurrent":1000, //最大并发处理数 默认值0:进程最大资源打开数量-10
-  "PidLog": "/tmp/log/superconsumer.log",
+  "PidLog": "/tmp/log/superconsumerr.log",
   //日志组件
   "logger": {
     "Targets": [
