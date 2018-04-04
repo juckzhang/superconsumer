@@ -27,7 +27,6 @@ func NewConsumer(c *config.Config, ch chan Message) *Kafka {
 }
 
 func (kafka *Kafka) Listen() {
-    var sw sync.WaitGroup
     var err error
 
     cfg := cluster.NewConfig()
@@ -62,11 +61,10 @@ Loop:
                 kafka.mChannel <- message          //将消息如管道，同时管道具有控制消息并发处理数的作用
             }
         case <-kafka.sig:
+            close(kafka.mChannel)
             break Loop
         }
     }
-
-    sw.Wait()
 }
 
 func (kafka *Kafka) errors() {

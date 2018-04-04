@@ -68,8 +68,7 @@ func main() {
     runtime.GOMAXPROCS(runtime.NumCPU())
     Wg.Add(2)
     //启动队列监听
-    go consumer.Listen()
-
+    go listen()
     go processTask()
     Wg.Wait()
 }
@@ -130,16 +129,20 @@ func initTask() {
     }
 }
 
+//@description 启动队列监听
+func listen() {
+    defer Wg.Done()
+    consumer.Listen()
+}
+
 func processTask() {
     defer Wg.Done()
-
     var wg sync.WaitGroup
 loop:
     for {
         select {
         case message := <-app.mChannel:
             app.stats.taskNum++ //任务出来数量累加器
-            panic(message)
             for _, task := range taskList[message.TopicName] {
                 //发送http请求
                 client := rpcClient[task.RpcGroup]
@@ -160,4 +163,6 @@ loop:
             break loop
         }
     }
+    defer close(app.mChannel)
+    wg.Wait()
 }
