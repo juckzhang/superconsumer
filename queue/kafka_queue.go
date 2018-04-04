@@ -37,7 +37,7 @@ func (kafka *Kafka) Listen() {
 
     kafka.consumer, err = cluster.NewConsumer(kafka.BrokerList, kafka.GroupId, kafka.Topics, cfg)
     if err != nil {
-        log.Warning("application", "%s: sarama.NewSyncProducer err, message=%s \n", kafka.GroupId, err)
+        log.Error("application", "%s: sarama.NewSyncProducer err, message=%s \n", kafka.GroupId, err)
         return
     }
     defer kafka.consumer.Close()
@@ -50,13 +50,15 @@ Loop:
         select {
         case msg, ok := <-kafka.consumer.Messages():
             if ok {
-                message := Message{
-                    TopicName: msg.Topic,
-                    Data:      msg.Value,
-                }
-                log.Info("application", "%s:%s/%d/%d\t%s\t%s\n", kafka.GroupId, msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
+                c := config.New()
+                log.Debug("application", "%s:%s/%d/%d\t%s\t%s\n", kafka.GroupId, msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
                 kafka.consumer.MarkOffset(msg, "") // mark message as processed
                 kafka.messageNum++                 //接收到的消息数量
+                c.LoadJSON(msg.Value)
+                message := Message{
+                    TopicName: msg.Topic,
+                    Data:      c.Get("data"),
+                }
                 kafka.mChannel <- message          //将消息如管道，同时管道具有控制消息并发处理数的作用
             }
         case <-kafka.sig:

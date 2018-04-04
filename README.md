@@ -67,12 +67,12 @@ go get github.com/go-ozzo/ozzo-log
     "1001":[
       {
         "ServiceName":"service",
-        "MethodName": "method"
+        "MethodName": "method",
         "RpcGroup": "http" //对应与`rpc`配置下的具体客户端
       },
       {
         "ServiceName":"service",
-        "MethodName": "method"
+        "MethodName": "method",
         "RpcGroup": "script" //对应与`rpc`配置下的具体客户端
       }
     ]

@@ -13,31 +13,25 @@
   },
 
   "rpc":{
-    "backend": {
-      "OpenId": "qwertyuiop",
-      "SecretKey": "lqVGFWV42sh5OdxaB-ZMwwRaCVKVcCcQ",
-      "BaseUrl": ["http://base.service.soyoung.com/rpc/index"],
+    "http": {
+      "OpenId": "OpenId",
+      "SecretKey": "SecretKey",
+      "BaseUrl": ["http://xxx.com/rpc/index"],
       "Type":1
     },
-    "frontend": {
-      "OpenId": "qwertyuiop",
-      "SecretKey": "lqVGFWV42sh5OdxaB-ZMwwRaCVKVcCcQ",
-      "BaseUrl": ["http://test.oracle.soyoung.com/rpc/index"],
-      "Type":1
-    },
-    "middleware": {
-      "OpenId": "qwertyuiop",
-      "SecretKey": "lqVGFWV42sh5OdxaB-ZMwwRaCVKVcCcQ",
-      "BaseUrl": ["http://test.admin.oracle.soyoung.com/rpc/index"],
-      "Type":1
+    "script": {
+      "OpenId": "OpenId",
+      "SecretKey": "SecretKey",
+      "BaseUrl": ["php -f script.php"],
+      "Type":2
     }
   },
 
   "queue":{
     "driver":"kafka",
     "driver_config":{
-      "GroupId":"oracle-kafka-queue-all",
-      "BrokerList":["172.16.16.4:9092"],
+      "Group":"oracle-kafka-queue-all",
+      "BrokerList":["127.0.0.1:9092"],
       "Errors":false,
       "Notifications":false,
       "Topics":["1001"]
@@ -47,8 +41,14 @@
   "topicGroup":{
     "1001":[
       {
-        "ServiceName":"order/deposit-order",
-        "RpcGroup": "middleware"
+        "ServiceName":"service",
+        "MethodName": "method",
+        "RpcGroup": "http" //对应与`rpc`配置下的具体客户端
+      },
+      {
+        "ServiceName":"service",
+        "MethodName": "method",
+        "RpcGroup": "script" //对应与`rpc`配置下的具体客户端
       }
     ]
   }

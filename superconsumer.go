@@ -12,6 +12,7 @@ import (
     "superconsume/rpc"
     "sync"
     "sync/atomic"
+    "fmt"
 )
 
 type stats struct {
