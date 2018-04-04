@@ -55,9 +55,8 @@ Loop:
 				}
 				log.Info("application", "%s:%s/%d/%d\t%s\t%s\n", kafka.GroupId, msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
 				kafka.consumer.MarkOffset(msg, "")  // mark message as processed
-
-				kafka.mChannel <- message //将消息如管道，同时管道具有控制消息并发处理数的作用
 				kafka.messageNum ++ //接收到的消息数量
+				kafka.mChannel <- message //将消息如管道，同时管道具有控制消息并发处理数的作用
 			}
 		case <-kafka.sig:
 			break Loop

@@ -36,7 +36,7 @@
   "queue":{
     "driver":"kafka",
     "driver_config":{
-      "Group":"oracle-kafka-queue-all",
+      "GroupId":"oracle-kafka-queue-all",
       "BrokerList":["172.16.16.4:9092"],
       "Errors":false,
       "Notifications":false,

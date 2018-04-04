@@ -10,6 +10,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"superconsume/constant"
+	"runtime"
 )
 
 type stats struct {
@@ -22,7 +23,7 @@ type App struct {
 	C *config.Config
 	ConfigPath *string
 	Sig chan os.Signal
-	Wg sync.WaitGroup
+	Wg *sync.WaitGroup
 	mChannel chan queue.Message
 	stats stats
 }
@@ -39,6 +40,7 @@ var (
 		ConfigPath:flag.String("c", "/etc/superconsumer.json", "配置文件"),
 		Sig: make(chan os.Signal, 1),
 		stats: stats{},
+		Wg:&sync.WaitGroup{},
 	}
 
 	rpcClient = make(map[string]*rpc.RpcClient)
@@ -61,24 +63,24 @@ func main() {
 	app.mChannel = make(chan queue.Message, maxConcurrent) //次数可以通过获取配置文件中的最大并发数
 
 	initApp()
-
-
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	Wg.Add(2)
 	//启动队列监听
 	go consumer.Listen()
 
 	go processTask()
+	Wg.Wait()
 }
 
 func initApp() {
 	//配置logger
 	log.NewLogger(app.C)
 
-	//初始化任务
-	initTask()
-
 	//初始化rpc客户端
 	initRpcClient()
+
+	//初始化任务
+	initTask()
 
 	//初始化队列消费者
 	initConsumer()
