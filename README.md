@@ -9,6 +9,13 @@ super consumer
 4、监听消费者与业务逻辑处理分离。
 5、完善的日志记录系统。
 ```
+### 依赖库
+```
+go get github.com/go-ozzo/ozzo-config
+go get github.com/bsm/sarama-cluster
+go get github.com/Shopify/sarama
+go get github.com/go-ozzo/ozzo-log
+```
 
 ### Config
 ```json
