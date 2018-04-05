@@ -12,6 +12,7 @@ import (
 	"superconsumer/rpc"
 	"sync"
 	"sync/atomic"
+	"io"
 )
 
 type stats struct {
@@ -61,7 +62,9 @@ func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	Wg.Add(2)
 	//启动队列监听
+	io.WriteString(os.Stdout, "正在监听队列...\n")
 	go listen()
+	io.WriteString(os.Stdout, "任务处理准备就绪...\n")
 	go processTask()
 	Wg.Wait()
 }
@@ -69,15 +72,19 @@ func main() {
 func initService() {
 	//配置logger
 	log.NewLogger(app.C)
+	io.WriteString(os.Stdout, "日志组件配置完成...\n")
 
 	//初始化rpc客户端
 	initRpcClient()
+	io.WriteString(os.Stdout, "任务处理客户端初始化完成...\n")
 
 	//初始化任务
 	initTask()
+	io.WriteString(os.Stdout, "任务列表初始化完成...\n")
 
 	//初始化队列消费者
 	initConsumer()
+	io.WriteString(os.Stdout, "队列驱动初始化完成...\n")
 }
 
 // @description 初始化rpc客户端
