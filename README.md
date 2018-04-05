@@ -13,7 +13,7 @@ superconsumer 是一个将消息获取与具体业务逻辑处理部分做分离
 ```
 1、支持多种消息队列驱动器(目前暂只支持kafka)。
 2、高并发处理消息。
-3、通过配置管理消息的最大并发数。
+3、通过配置管理消息处理的最大并发数。
 4、消息监听分发与业务逻辑处理分离。
 5、完善的日志记录系统。
 6、支持脚本与http接口方式的消息处理接口。
@@ -28,7 +28,7 @@ go get github.com/go-ozzo/ozzo-log
 ```
 ### Install
 ```
-go get github.com/juckzhang/superconsumerr
+go get github.com/juckzhang/superconsumer
 
 ```
 
