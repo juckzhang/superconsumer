@@ -108,7 +108,7 @@ go get github.com/juckzhang/superconsumer
 }
 返回值:
 {
-    "code":200,//200:成功,<=0:请求失败
+    "code":200,//200:成功,<0:请求失败
 }
 ```
 
