@@ -8,7 +8,7 @@
 # Short-Description: starts superconsumer
 # Description:       starts the superconsumer Process Manager daemon
 ### END INIT INFO
-superconsumer_BIN=/usr/sbin/superconsumer
+superconsumer_BIN=/usr/bin/superconsumer
 superconsumer_CONF=/etc/superconsumer.json
 superconsumer_PID=/tmp/superconsumer.pid
 php_opts="-c $superconsumer_CONF"

@@ -34,10 +34,8 @@ func (kafka *Kafka) Listen() {
 	cfg.Group.Return.Notifications = kafka.Notifications
 	cfg.Consumer.Offsets.Initial = sarama.OffsetNewest
 
-	kafka.consumer, err = cluster.NewConsumer(kafka.BrokerList, kafka.GroupId, kafka.Topics, cfg)
-	if err != nil {
-		log.Error("application", "%s: sarama.NewSyncProducer err, message=%s \n", kafka.GroupId, err)
-		return
+	if kafka.consumer, err = cluster.NewConsumer(kafka.BrokerList, kafka.GroupId, kafka.Topics, cfg); err != nil {
+		panic(err)
 	}
 	defer kafka.consumer.Close()
 
