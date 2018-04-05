@@ -92,8 +92,8 @@ go get github.com/juckzhang/superconsumerr
 
 ### Usage
 ```
-启动服务: superconsumerr start
-停止服务: superconsumerr stop
-重启服务: superconsumerr restart
-重新加载配置: superconsumerr reload
+启动服务: superconsumerd start
+停止服务: superconsumerd stop
+重启服务: superconsumerd restart
+重新加载配置: superconsumerd reload
 ```
