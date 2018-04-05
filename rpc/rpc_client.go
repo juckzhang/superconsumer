@@ -96,11 +96,7 @@ func (rpcClient *RpcClient) structure(service string, method string, parameters 
 		timestamp: time.Now().Unix(),
 		sign:      "asffffasdff",
 	}
-	request := &request{
-		data:     data,
-		request:  new(http.Request),
-		response: new(http.Response),
-	}
+	request := &request{data: data,}
 	dataJson, err := json.Marshal(data)
 	var req *http.Request
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
