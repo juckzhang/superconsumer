@@ -93,9 +93,8 @@ go get github.com/juckzhang/superconsumer
 
 ### 业务接口请求参数与返回值说明
 请求参数中`opendId`,由业务端分配用于做请求校验。
-请求参数:
 ```json
-
+请求参数:
 {
     "service":   "服务名称",
     "method":    "服务方法",
