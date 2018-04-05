@@ -100,9 +100,9 @@ go get github.com/juckzhang/superconsumer
     "args":      {
                     "TopicName": "消息topic名称",
                     "Data":      interface{}, //消息内容
-                 }
-    "openId":    "由服务端分配的openId"
-    "timestamp": "请求发起时间"
+                 },
+    "openId":    "由服务端分配的openId",
+    "timestamp": "请求发起时间",
     "sign":      "请求签名"
 }
 ```
