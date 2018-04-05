@@ -23,7 +23,6 @@ type stats struct {
 
 type App struct {
 	C          *config.Config
-	ConfigPath *string
 	Sig        chan os.Signal
 	mChannel   chan queue.Message
 	stats      stats
@@ -38,7 +37,6 @@ type Task struct {
 var (
 	app = App{
 		C:          config.New(),
-		ConfigPath: flag.String("c", "/etc/superconsumerr.json", "配置文件"),
 		Sig:        make(chan os.Signal, 1),
 		stats:      stats{},
 	}
@@ -48,28 +46,18 @@ var (
 	Wg        sync.WaitGroup
 )
 
-func main() {
+func init() {
+	c := flag.String("c", "/etc/superconsumerr.json", "配置文件")
 	flag.Parse()
-
-	//加载配置文件
-	if err := app.C.Load(*app.ConfigPath); err != nil {
+	if err := app.C.Load(*c); err != nil {
 		panic(err)
 	}
-	maxConcurrent := app.C.GetInt("maxConcurrent")
-	app.mChannel = make(chan queue.Message, maxConcurrent) //次数可以通过获取配置文件中的最大并发数
-	signal.Notify(app.Sig, os.Interrupt)                   //监听退出信号、user1、user2
-	initService()
+	signal.Notify(app.Sig, os.Interrupt)
 	runtime.GOMAXPROCS(runtime.NumCPU())
-	Wg.Add(2)
-	//启动队列监听
-	io.WriteString(os.Stdout, "正在监听队列...\n")
-	go listen()
-	io.WriteString(os.Stdout, "任务处理准备就绪...\n")
-	go processTask()
-	Wg.Wait()
 }
 
-func initService() {
+func main() {
+	app.mChannel = make(chan queue.Message, app.C.GetInt("maxConcurrent")) //次数可以通过获取配置文件中的最大并发数
 	//配置logger
 	log.NewLogger(app.C)
 	io.WriteString(os.Stdout, "日志组件配置完成...\n")
@@ -85,6 +73,13 @@ func initService() {
 	//初始化队列消费者
 	initConsumer()
 	io.WriteString(os.Stdout, "队列驱动初始化完成...\n")
+	Wg.Add(2)
+	//启动队列监听
+	io.WriteString(os.Stdout, "正在监听队列...\n")
+	go listen()
+	io.WriteString(os.Stdout, "任务处理准备就绪...\n")
+	go processTask()
+	Wg.Wait()
 }
 
 // @description 初始化rpc客户端
@@ -136,6 +131,7 @@ func listen() {
 	consumer.Listen()
 }
 
+// @description 任务处理
 func processTask() {
 	defer Wg.Done()
 	var wg sync.WaitGroup
