@@ -49,14 +49,14 @@ go get github.com/juckzhang/superconsumerr
 
   "rpc":{
     "http": {
-      "OpenId": "OpenId",
-      "SecretKey": "SecretKey",
+      "OpenId": "OpenId",//业务段分配
+      "SecretKey": "SecretKey", //业务端分配
       "BaseUrl": ["http://xxx.com/rpc/index"],
       "Type":1
     },
     "script": {
-      "OpenId": "OpenId",
-      "SecretKey": "SecretKey",
+      "OpenId": "OpenId",//业务段分配
+      "SecretKey": "SecretKey",//业务端分配
       "BaseUrl": ["php -f script.php"],
       "Type":2
     }
@@ -87,6 +87,22 @@ go get github.com/juckzhang/superconsumerr
       }
     ]
   }
+}
+```
+
+### 业务接口请求参数说明
+请求参数中`opendId`,由业务端分配用于做请求校验。
+```json
+{
+    "service":   "服务名称",
+    "method":    "服务方法",
+    "args":      {
+                    "TopicName": "消息topic名称",
+                    "Data":      interface{}, //消息内容
+                 }
+    "openId":    "由服务端分配的openId"
+    "timestamp": "请求发起时间"
+    "sign":      "请求签名"
 }
 ```
 

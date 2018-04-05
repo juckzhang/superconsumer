@@ -24,7 +24,6 @@ type App struct {
 	C          *config.Config
 	ConfigPath *string
 	Sig        chan os.Signal
-	Wg         *sync.WaitGroup
 	mChannel   chan queue.Message
 	stats      stats
 }
@@ -41,7 +40,6 @@ var (
 		ConfigPath: flag.String("c", "/etc/superconsumerr.json", "配置文件"),
 		Sig:        make(chan os.Signal, 1),
 		stats:      stats{},
-		Wg:         &sync.WaitGroup{},
 	}
 	rpcClient = make(map[string]*rpc.RpcClient)
 	consumer  queue.QueueInterface
@@ -59,7 +57,7 @@ func main() {
 	maxConcurrent := app.C.GetInt("maxConcurrent")
 	app.mChannel = make(chan queue.Message, maxConcurrent) //次数可以通过获取配置文件中的最大并发数
 	signal.Notify(app.Sig, os.Interrupt)                   //监听退出信号、user1、user2
-	initApp()
+	initService()
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	Wg.Add(2)
 	//启动队列监听
@@ -68,7 +66,7 @@ func main() {
 	Wg.Wait()
 }
 
-func initApp() {
+func initService() {
 	//配置logger
 	log.NewLogger(app.C)
 
@@ -100,6 +98,7 @@ func initConsumer() {
 	consumer = queue.NewQueue(app.C, app.mChannel)
 }
 
+// @description 创建任务
 func initTask() {
 	if err := app.C.Configure(&taskList, "topicGroup"); err != nil {
 		panic(err)

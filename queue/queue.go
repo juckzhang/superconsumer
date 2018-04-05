@@ -24,10 +24,11 @@ type Queue struct {
 }
 
 var (
-	sig = make(chan os.Signal, 1)
+	sig chan os.Signal
 )
 
 func init() {
+	sig = make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt) //监听退出信号、user1、user2
 }
 
