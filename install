@@ -1,5 +1,9 @@
 #! /bin/bash
 ### 编译程序
+go get github.com/go-ozzo/ozzo-config
+go get github.com/bsm/sarama-cluster
+go get github.com/Shopify/sarama
+go get github.com/go-ozzo/ozzo-log
 go build
 
 ### 编译后的文件移到指定目录下
