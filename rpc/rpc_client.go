@@ -18,17 +18,8 @@ type RpcConfig struct {
 	Type      int      `请求类型 1: http 2:console脚本`
 }
 
-type requestBody struct {
-	service   string      `服务名称`
-	method    string      `服务方法`
-	args      interface{} `请求参数`
-	openId    string      `open id`
-	timestamp int64       `请求时间`
-	sign      string      `请求签名`
-}
-
 type request struct {
-	data     requestBody
+	data     []byte
 	request  *http.Request
 	response *http.Response
 }
@@ -69,6 +60,7 @@ func (rpcClient *RpcClient) Do(service string, method string, parameters interfa
 	if req, err = rpcClient.structure(service, method, parameters); err != nil {
 		return constant.RPC_FAILED
 	}
+
 	req.response, err = rpcClient.httpClient.Do(req.request)
 	if err != nil {
 		return constant.RPC_FAILED
@@ -88,16 +80,16 @@ func (rpcClient *RpcClient) Do(service string, method string, parameters interfa
 // @description 构造请求
 func (rpcClient *RpcClient) structure(service string, method string, parameters interface{}) (*request, error) {
 	//获取配置信息
-	data := requestBody{
-		service:   service,
-		method:    method,
-		args:      parameters,
-		openId:    rpcClient.rpcConfig.OpenId,
-		timestamp: time.Now().Unix(),
-		sign:      "asffffasdff",
+	data := map[string]interface{}{
+		"class":   service,
+		"method":    method,
+		"args":      parameters,
+		"openId":    rpcClient.rpcConfig.OpenId,
+		"timestamp": time.Now().Unix(),
+		"sign":      "asffffasdff",
 	}
-	request := &request{data: data,}
 	dataJson, err := json.Marshal(data)
+	request := &request{data: dataJson,}
 	var req *http.Request
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	index := r.Intn(len(rpcClient.rpcConfig.BaseUrl))
