@@ -7,7 +7,7 @@ go get github.com/go-ozzo/ozzo-log
 go build
 
 ### 编译后的文件移到指定目录下
-mv ./superconsumer /usr/bin/superconsumer && chmod a+x /usr/sbin/superconsumer
+mv ./superconsumer /usr/bin/superconsumer && chmod a+x /usr/bin/superconsumer
 
 ### 创建配置文件与服务进程管理脚本
 mv ./config/superconsumer.json /etc/superconsumer.json
