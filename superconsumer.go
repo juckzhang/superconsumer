@@ -46,7 +46,7 @@ var (
 )
 
 func init() {
-	c := flag.String("c", "/etc/superconsumerr.json", "配置文件")
+	c := flag.String("c", "/etc/superconsumer.json", "配置文件")
 	flag.Parse()
 	if err := app.C.Load(*c); err != nil {
 		panic(err)
