@@ -81,7 +81,7 @@ func (rpcClient *RpcClient) Do(service string, method string, parameters interfa
 func (rpcClient *RpcClient) structure(service string, method string, parameters interface{}) (*request, error) {
 	//获取配置信息
 	data := map[string]interface{}{
-		"class":   service,
+		"class":     service,
 		"method":    method,
 		"args":      parameters,
 		"openId":    rpcClient.rpcConfig.OpenId,
@@ -89,7 +89,7 @@ func (rpcClient *RpcClient) structure(service string, method string, parameters 
 		"sign":      "asffffasdff",
 	}
 	dataJson, err := json.Marshal(data)
-	request := &request{data: dataJson,}
+	request := &request{data: dataJson}
 	var req *http.Request
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	index := r.Intn(len(rpcClient.rpcConfig.BaseUrl))

@@ -21,10 +21,10 @@ type stats struct {
 }
 
 type App struct {
-	C          *config.Config
-	Sig        chan os.Signal
-	mChannel   chan queue.Message
-	stats      stats
+	C        *config.Config
+	Sig      chan os.Signal
+	mChannel chan queue.Message
+	stats    stats
 }
 
 type Task struct {
@@ -35,9 +35,9 @@ type Task struct {
 
 var (
 	app = App{
-		C:          config.New(),
-		Sig:        make(chan os.Signal, 1),
-		stats:      stats{},
+		C:     config.New(),
+		Sig:   make(chan os.Signal, 1),
+		stats: stats{},
 	}
 	rpcClient = make(map[string]*rpc.RpcClient)
 	consumer  queue.QueueInterface
@@ -59,24 +59,24 @@ func main() {
 	app.mChannel = make(chan queue.Message, app.C.GetInt("maxConcurrent")) //次数可以通过获取配置文件中的最大并发数
 	//配置logger
 	log.NewLogger(app.C)
-	os.Stdout.WriteString( "日志组件配置完成...\n")
+	os.Stdout.WriteString("日志组件配置完成...\n")
 
 	//初始化rpc客户端
 	initRpcClient()
-	os.Stdout.WriteString( "任务处理客户端初始化完成...\n")
+	os.Stdout.WriteString("任务处理客户端初始化完成...\n")
 
 	//初始化任务
 	initTask()
-	os.Stdout.WriteString( "任务列表初始化完成...\n")
+	os.Stdout.WriteString("任务列表初始化完成...\n")
 
 	//初始化队列消费者
 	initConsumer()
-	os.Stdout.WriteString( "队列驱动初始化完成...\n")
+	os.Stdout.WriteString("队列驱动初始化完成...\n")
 	Wg.Add(2)
 	//启动队列监听
-	os.Stdout.WriteString( "正在监听队列...\n")
+	os.Stdout.WriteString("正在监听队列...\n")
 	go listen()
-	os.Stdout.WriteString( "任务处理准备就绪...\n")
+	os.Stdout.WriteString("任务处理准备就绪...\n")
 	go processTask()
 	Wg.Wait()
 }
@@ -137,8 +137,10 @@ func processTask() {
 loop:
 	for {
 		select {
-		case message,ok := <-app.mChannel:
-			if !ok {break loop}
+		case message, ok := <-app.mChannel:
+			if !ok {
+				break loop
+			}
 			app.stats.taskNum++ //任务出来数量累加器
 			for _, task := range taskList[message.TopicName] {
 				//发送http请求
@@ -158,7 +160,7 @@ loop:
 			log.Info(
 				"application",
 				"任务处理数量 %d 失败数量 %d 成功数量 %d",
-				app.stats.taskNum,app.stats.failedNum,app.stats.successNum)
+				app.stats.taskNum, app.stats.failedNum, app.stats.successNum)
 			break loop
 		}
 	}

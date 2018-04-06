@@ -46,22 +46,24 @@ Loop:
 	for {
 		select {
 		case msg, ok := <-kafka.consumer.Messages():
-		    if !ok {break Loop}
-            log.Debug("application", "%s:%s/%d/%d\t%s\t%s\n", kafka.GroupId, msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
-            kafka.consumer.MarkOffset(msg, "") // mark message as processed
-            kafka.messageNum++                 //接收到的消息数量
-            c := config.New()
-            c.LoadJSON(msg.Value)
-            message := Message{
-                TopicName: msg.Topic,
-                Data:      c.Get("data"),
-            }
-            kafka.mChannel <- message //将消息如管道，同时管道具有控制消息并发处理数的作用
+			if !ok {
+				break Loop
+			}
+			log.Debug("application", "%s:%s/%d/%d\t%s\t%s\n", kafka.GroupId, msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
+			kafka.consumer.MarkOffset(msg, "") // mark message as processed
+			kafka.messageNum++                 //接收到的消息数量
+			c := config.New()
+			c.LoadJSON(msg.Value)
+			message := Message{
+				TopicName: msg.Topic,
+				Data:      c.Get("data"),
+			}
+			kafka.mChannel <- message //将消息如管道，同时管道具有控制消息并发处理数的作用
 		case <-kafka.sig:
 			break Loop
 		}
 	}
-    close(kafka.mChannel)
+	close(kafka.mChannel)
 }
 
 func (kafka *Kafka) errors() {
