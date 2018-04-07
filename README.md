@@ -26,11 +26,6 @@ go get github.com/bsm/sarama-cluster
 go get github.com/Shopify/sarama
 go get github.com/go-ozzo/ozzo-log
 ```
-### Install
-```
-go get github.com/juckzhang/superconsumer
-
-```
 
 ### Config
 ```json
@@ -112,6 +107,16 @@ go get github.com/juckzhang/superconsumer
 }
 ```
 
+### Install
+```
+1.获取源码包
+go get github.com/juckzhang/superconsumer
+
+2.安装程序
+cd $work/superconsumer
+sudo sh install
+
+```
 
 ### Usage
 ```
