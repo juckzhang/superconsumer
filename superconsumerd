@@ -22,7 +22,7 @@ wait_for_pid () {
                                 break
                         else
                                 pid=`pgrep -f $superconsumer_BIN`
-                                if [ -n "$pid"] ; then
+                                if [ -n "$pid" ] ; then
                                     echo $pid > $superconsumer_PID
                                 fi
                                 try=''
