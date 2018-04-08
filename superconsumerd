@@ -20,12 +20,21 @@ wait_for_pid () {
                         if [ -f "$2" ] ; then
                                 try=''
                                 break
+                        else
+                                pid=`pgrep -f  grep $superconsumer_BIN`
+                                if [ -n "$pid"] ; then
+                                    echo $pid > $superconsumer_PID
+                                fi
+                                try=''
+                                break
                         fi
                         ;;
                         'removed')
                         if [ ! -f "$2" ] ; then
                                 try=''
                                 break
+                        else
+                                rm -rf $superconsumer_PID
                         fi
                         ;;
                 esac
@@ -36,6 +45,10 @@ wait_for_pid () {
 }
 case "$1" in
         start)
+                if [ -f $superconsumer_PID ] ; then
+                    echo "superconsumer IS RUNING"
+                    exit
+                fi
                 echo -n "Starting superconsumer "
                 nohup $superconsumer_BIN $php_opts &
                 if [ "$?" != 0 ] ; then
@@ -47,7 +60,7 @@ case "$1" in
                         echo " failed"
                         exit 1
                 else
-                        echo " done"
+                        echo "..................... RUNING"
                 fi
         ;;
         stop)
@@ -62,8 +75,7 @@ case "$1" in
                         echo " failed. Use force-exit"
                         exit 1
                 else
-                        echo " done"
-                       echo " done"
+                       echo "..................... STOPED"
                 fi
         ;;
         force-quit)
@@ -78,7 +90,7 @@ case "$1" in
                         echo " failed"
                         exit 1
                 else
-                        echo " done"
+                        echo "..................... STOPED"
                 fi
         ;;
         restart)
