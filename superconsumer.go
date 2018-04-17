@@ -138,6 +138,7 @@ loop:
 	for {
 		select {
 		case message, ok := <-app.mChannel:
+		    //写端已关闭。读端处理完channel中剩余的消息后在退出!
 			if !ok {
 				break loop
 			}
