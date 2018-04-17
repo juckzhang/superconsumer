@@ -156,12 +156,6 @@ loop:
 					}
 				}()
 			}
-		case <-app.Sig:
-			log.Info(
-				"application",
-				"任务处理数量 %d 失败数量 %d 成功数量 %d",
-				app.stats.taskNum, app.stats.failedNum, app.stats.successNum)
-			break loop
 		}
 	}
 	wg.Wait()
