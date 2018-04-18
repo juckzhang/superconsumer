@@ -22,7 +22,6 @@ type stats struct {
 
 type App struct {
 	C        *config.Config
-	Sig      chan os.Signal
 	mChannel chan queue.Message
 	stats    stats
 }
@@ -36,7 +35,6 @@ type Task struct {
 var (
 	app = App{
 		C:     config.New(),
-		Sig:   make(chan os.Signal, 1),
 		stats: stats{},
 	}
 	rpcClient = make(map[string]*rpc.RpcClient)
@@ -51,7 +49,6 @@ func init() {
 	if err := app.C.Load(*c); err != nil {
 		panic(err)
 	}
-	signal.Notify(app.Sig, os.Interrupt)
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
