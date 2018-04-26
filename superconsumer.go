@@ -49,7 +49,6 @@ func init() {
 	if err := app.C.Load(*c); err != nil {
 		panic(err)
 	}
-	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
 func main() {
