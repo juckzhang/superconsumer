@@ -27,16 +27,7 @@ func NewConsumer(c *config.Config, ch chan Message) *Kafka {
 }
 
 func (kafka *Kafka) Listen() {
-	var err error
-
-	cfg := cluster.NewConfig()
-	cfg.Consumer.Return.Errors = kafka.Errors
-	cfg.Group.Return.Notifications = kafka.Notifications
-	cfg.Consumer.Offsets.Initial = sarama.OffsetNewest
-
-	if kafka.consumer, err = cluster.NewConsumer(kafka.BrokerList, kafka.GroupId, kafka.Topics, cfg); err != nil {
-		panic(err)
-	}
+	kafka.newConsumer()
 	defer kafka.consumer.Close()
 
 	kafka.errors()
@@ -64,6 +55,19 @@ Loop:
 		}
 	}
 	close(kafka.mChannel)
+}
+
+func (kafka *Kafka) newConsumer() {
+	var err error
+
+	cfg := cluster.NewConfig()
+	cfg.Consumer.Return.Errors = kafka.Errors
+	cfg.Group.Return.Notifications = kafka.Notifications
+	cfg.Consumer.Offsets.Initial = sarama.OffsetNewest
+
+	if kafka.consumer, err = cluster.NewConsumer(kafka.BrokerList, kafka.GroupId, kafka.Topics, cfg); err != nil {
+		panic(err)
+	}
 }
 
 func (kafka *Kafka) errors() {
